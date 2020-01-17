@@ -103,6 +103,84 @@ public:
 	};
 };
 
+void draw_pixel(std::vector<uint8_t>& v,int _width,int x,int y,uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+{
+	v[x * _width * 4 + y * 4] = r;
+	v[x * _width * 4 + y * 4 + 1] = g;
+	v[x * _width * 4 + y * 4 + 2] = b;
+	v[x * _width * 4 + y * 4 + 3] = a;
+}
+
+void draw_point(std::vector<uint8_t>& v, int _width, int ra, int x, int y, 
+	uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+{
+	for (int i = -ra; i < ra; i++)
+	{
+		for (int j = -ra; j < ra; j++)
+		{
+			if(i*i + j*j <= ra*ra)
+				draw_pixel(v, _width, x + i, y + j, r, g, b, a);
+		}
+	}
+}
+
+// 交换整数 a 、b 的值
+inline void swap_int(int *a, int *b) {
+	*a ^= *b;
+	*b ^= *a;
+	*a ^= *b;
+}
+
+// Bresenham's line algorithm
+void draw_line(std::vector<uint8_t>& v, int _width, int x1, int y1, int x2, int y2, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+{
+	// 参数 c 为颜色值
+	int dx = abs(x2 - x1),
+		dy = abs(y2 - y1),
+		yy = 0;
+
+	if (dx < dy) {
+		yy = 1;
+		swap_int(&x1, &y1);
+		swap_int(&x2, &y2);
+		swap_int(&dx, &dy);
+	}
+
+	int ix = (x2 - x1) > 0 ? 1 : -1,
+		iy = (y2 - y1) > 0 ? 1 : -1,
+		cx = x1,
+		cy = y1,
+		n2dy = dy * 2,
+		n2dydx = (dy - dx) * 2,
+		d = dy * 2 - dx;
+
+	if (yy) { // 如果直线与 x 轴的夹角大于 45 度
+		while (cx != x2) {
+			if (d < 0) {
+				d += n2dy;
+			}
+			else {
+				cy += iy;
+				d += n2dydx;
+			}
+			draw_point(v, _width, 4, cy, cx, r, g, b, a);
+			cx += ix;
+		}
+	}
+	else { // 如果直线与 x 轴的夹角小于 45 度
+		while (cx != x2) {
+			if (d < 0) {
+				d += n2dy;
+			}
+			else {
+				cy += iy;
+				d += n2dydx;
+			}
+			draw_point(v, _width, 4, cx, cy, r, g, b, a);
+			cx += ix;
+		}
+	}
+}
 
 
 int main()
@@ -113,18 +191,14 @@ int main()
 
 
 
-	auto fileName = "E:\\bwgif.gif";
+	auto fileName = "E:\\Double-Pendulum.gif";
 	int delay = 10;
 	GifWriter g;
 	GifBegin(&g, fileName, width, height, delay);
 
 	MyClass m({ 0.5, -0.8 }, { 0,0 });
 
-	one_frame[200 * width * 4 + 200 * 4] = 0;
-	one_frame[200 * width * 4 + 200 * 4 + 1] = 0;
-	one_frame[200 * width * 4 + 200 * 4 + 2] = 0;
-	one_frame[200 * width * 4 + 200 * 4 + 3] = 0;
-
+	
 	for (size_t i = 0; i < 100000; i++)
 	{
 		if (i % 100 == 0)
@@ -134,25 +208,11 @@ int main()
 			y1 = 200 + 100 * sin(m.position[0]);
 			x2 = x1 + 100 * cos(m.position[1]);
 			y2 = y1 + 100 * sin(m.position[1]);
-			std::swap(x1, y1);
-			std::swap(x2, y2);
-			one_frame[y1 * width * 4 + x1 * 4] = 0;
-			one_frame[y1 * width * 4 + x1 * 4 + 1] = 0;
-			one_frame[y1 * width * 4 + x1 * 4 + 2] = 0;
-			one_frame[y1 * width * 4 + x1 * 4 + 3] = 0;
-			one_frame[y2 * width * 4 + x2 * 4] = 0;
-			one_frame[y2 * width * 4 + x2 * 4 + 1] = 0;
-			one_frame[y2 * width * 4 + x2 * 4 + 2] = 0;
-			one_frame[y2 * width * 4 + x2 * 4 + 3] = 0;
+			draw_line(one_frame, width, 200, 200, x1, y1, 0, 0, 0, 255);
+			draw_line(one_frame, width, x1, y1, x2, y2, 0, 0, 0, 255);
 			GifWriteFrame(&g, one_frame.data(), width, height, delay);
-			one_frame[y1 * width * 4 + x1 * 4] = 255;
-			one_frame[y1 * width * 4 + x1 * 4 + 1] = 255;
-			one_frame[y1 * width * 4 + x1 * 4 + 2] = 255;
-			one_frame[y1 * width * 4 + x1 * 4 + 3] = 255;
-			one_frame[y2 * width * 4 + x2 * 4] = 255;
-			one_frame[y2 * width * 4 + x2 * 4 + 1] = 255;
-			one_frame[y2 * width * 4 + x2 * 4 + 2] = 255;
-			one_frame[y2 * width * 4 + x2 * 4 + 3] = 255;
+			draw_line(one_frame, width, 200, 200, x1, y1, 255, 255, 255, 255);
+			draw_line(one_frame, width, x1, y1, x2, y2, 255, 255, 255, 255);
 		}
 		m.update_p();
 		m.update_v();
