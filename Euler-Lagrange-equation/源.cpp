@@ -1,17 +1,19 @@
 #define  _CRT_SECURE_NO_WARNINGS 
 
-
-
-
 #include <array>
+#include <vector>
 #include <math.h>
 #include <cstdio>
+
+#include "gif.h"
 
 template <unsigned int Dim, typename DataType>
 class Lagrangian
 {
 public:
-	Lagrangian(std::array<DataType, Dim> _position, std::array<DataType, Dim> _velocity) :position(_position), velocity(_velocity) {};
+	Lagrangian(std::array<DataType, Dim> _position,
+		std::array<DataType, Dim> _velocity) 
+		:position(_position), velocity(_velocity) {};
 	~Lagrangian() = default;
 
 
@@ -87,7 +89,7 @@ private:
 class MyClass : public Lagrangian<2, double>
 {
 public:
-	MyClass(std::array<double, 2> _position, std::array<double, 2> _velocity) :Lagrangian(_position, _velocity) {};
+	MyClass(std::array<double, 2> _position, std::array<double, 2> _velocity) : Lagrangian(_position, _velocity) {};
 	~MyClass() = default;
 	const double L = 1;
 	const double m = 1;
@@ -102,16 +104,59 @@ public:
 };
 
 
+
 int main()
 {
+	int width = 400;
+	int height = 400;
+	std::vector<uint8_t> one_frame(width * height * 4, 255);
+
+
+
+	auto fileName = "E:\\bwgif.gif";
+	int delay = 10;
+	GifWriter g;
+	GifBegin(&g, fileName, width, height, delay);
+
 	MyClass m({ 0.5, -0.8 }, { 0,0 });
-	FILE* pFile = fopen("E:\\test.txt", "w");
+
+	one_frame[200 * width * 4 + 200 * 4] = 0;
+	one_frame[200 * width * 4 + 200 * 4 + 1] = 0;
+	one_frame[200 * width * 4 + 200 * 4 + 2] = 0;
+	one_frame[200 * width * 4 + 200 * 4 + 3] = 0;
+
 	for (size_t i = 0; i < 100000; i++)
 	{
 		if (i % 100 == 0)
-			fprintf(pFile,"%f %f\n", m.position[0], m.position[1]);
+		{	
+			int x1, y1, x2, y2;
+			x1 = 200 + 100 * cos(m.position[0]);
+			y1 = 200 + 100 * sin(m.position[0]);
+			x2 = x1 + 100 * cos(m.position[1]);
+			y2 = y1 + 100 * sin(m.position[1]);
+			std::swap(x1, y1);
+			std::swap(x2, y2);
+			one_frame[y1 * width * 4 + x1 * 4] = 0;
+			one_frame[y1 * width * 4 + x1 * 4 + 1] = 0;
+			one_frame[y1 * width * 4 + x1 * 4 + 2] = 0;
+			one_frame[y1 * width * 4 + x1 * 4 + 3] = 0;
+			one_frame[y2 * width * 4 + x2 * 4] = 0;
+			one_frame[y2 * width * 4 + x2 * 4 + 1] = 0;
+			one_frame[y2 * width * 4 + x2 * 4 + 2] = 0;
+			one_frame[y2 * width * 4 + x2 * 4 + 3] = 0;
+			GifWriteFrame(&g, one_frame.data(), width, height, delay);
+			one_frame[y1 * width * 4 + x1 * 4] = 255;
+			one_frame[y1 * width * 4 + x1 * 4 + 1] = 255;
+			one_frame[y1 * width * 4 + x1 * 4 + 2] = 255;
+			one_frame[y1 * width * 4 + x1 * 4 + 3] = 255;
+			one_frame[y2 * width * 4 + x2 * 4] = 255;
+			one_frame[y2 * width * 4 + x2 * 4 + 1] = 255;
+			one_frame[y2 * width * 4 + x2 * 4 + 2] = 255;
+			one_frame[y2 * width * 4 + x2 * 4 + 3] = 255;
+		}
 		m.update_p();
 		m.update_v();
 	}
+	GifEnd(&g);
 	return 0;
 }
