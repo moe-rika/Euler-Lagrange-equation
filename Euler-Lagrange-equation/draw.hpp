@@ -1,7 +1,7 @@
 #pragma once
 
-const int width = 1000;
-const int height = 1000;
+const int width = 600;
+const int height = 600;
 
 void draw_pixel(std::vector<uint8_t>&
 	v, int _width, int x, int y, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
