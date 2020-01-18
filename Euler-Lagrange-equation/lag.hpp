@@ -30,8 +30,8 @@ private:
 		position[i] += delta;
 		auto b = calc_lagrangian();
 		position[i] = temp;
-		if (i == 3)
-			printf("%f", (b - a) / delta);
+		//if (i == 2)
+		//	printf("%f\n", (b - a) / delta);
 		return (b - a) / delta;
 	}
 	DataType partial_derivative_v(int i)

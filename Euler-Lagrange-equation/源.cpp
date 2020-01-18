@@ -40,18 +40,18 @@ public:
 	const double m2 = 1;
 	const double g = 9.8;
 
-	 double& a = position[0];
-	 double& b = position[1];
-	 double& c = position[2];
-	 double& va = velocity[0];
-	 double& vb = velocity[1];
-	 double& vc = velocity[2];
+	double& a = position[0];
+	double& b = position[1];
+	double& c = position[2];
+	double& va = velocity[0];
+	double& vb = velocity[1];
+	double& vc = velocity[2];
 
-	double T1()
-	{
 #define Power pow
 #define Cos cos
 #define Sin sin
+	double T1()
+	{
 		return m1 * ((L1*Power(va, 2)) / 2. + (Power(L1, 3)*Power(vb, 2)) / 6. +
 			(Power(L1, 2)*va*vb*Cos(b)) / 2.);
 	}
@@ -70,7 +70,7 @@ public:
 
 	double V()
 	{
-		return -1 / 2.* g *(m1*L1*cos(a) + m2 * (L1*cos(a) + L2 * cos(b)));
+		return -1 / 2.* g *(m1*L1*cos(b) + m2 * (L1*cos(b) + L2 * cos(c)));
 	}
 
 	double calc_lagrangian() override {
@@ -83,31 +83,31 @@ int main()
 
 	std::vector<uint8_t> one_frame(width * height * 4, 255);
 
-	auto fileName = "E:\\Double-Pendulum26.gif";
+	auto fileName = "E:\\Double-Pendulum29.gif";
 	int delay = 10;
 	GifWriter g;
 	GifBegin(&g, fileName, width, height, delay);
 
-	MyClass2 m({ 0.01, 1.7 , 1.2 }, { 0,0,0 });
+	MyClass2 m({ 3, 1.7 , 1.2 }, { 0,0,0 });
 
 
 	for (size_t i = 0; i < 100000; i++)
 	{
 		if (i % 100 == 0)
 		{
-			//int x1, y1, x2, y2, x3, y3;
-			//x3 = width /2 + 100 * m.position[0];
-			//y3 = height / 2;
-			//x1 = x3 + m.L1 * 100 * sin(m.position[1]);
-			//y1 = y3 + m.L1 * 100 * cos(m.position[1]);
-			//x2 = x1 + m.L2 * 100 * sin(m.position[2]);
-			//y2 = y1 + m.L2 * 100 * cos(m.position[2]);
-			//draw_line(one_frame, width, x3, y3, x1, y1, 0, 0, 0, 255);
-			//draw_line(one_frame, width, x1, y1, x2, y2, 0, 0, 0, 255);
-			//GifWriteFrame(&g, one_frame.data(), width, height, delay);
-			//draw_line(one_frame, width, x3, y3, x1, y1, 255, 255, 255, 255);
-			//draw_line(one_frame, width, x1, y1, x2, y2, 255, 255, 255, 255);
-			printf("%f,%f,%f,%f,%f,%f\n", m.position[0], m.position[1], m.position[2], m.velocity[0], m.velocity[1], m.velocity[2]);
+			int x1, y1, x2, y2, x3, y3;
+			x3 = width /2 + 100 * m.position[0];
+			y3 = height / 2;
+			x1 = x3 + m.L1 * 100 * sin(m.position[1]);
+			y1 = y3 + m.L1 * 100 * cos(m.position[1]);
+			x2 = x1 + m.L2 * 100 * sin(m.position[2]);
+			y2 = y1 + m.L2 * 100 * cos(m.position[2]);
+			draw_line(one_frame, width, x3, y3, x1, y1, 0, 0, 0, 255);
+			draw_line(one_frame, width, x1, y1, x2, y2, 0, 0, 0, 255);
+			GifWriteFrame(&g, one_frame.data(), width, height, delay);
+			draw_line(one_frame, width, x3, y3, x1, y1, 255, 255, 255, 255);
+			draw_line(one_frame, width, x1, y1, x2, y2, 255, 255, 255, 255);
+			//printf("%f,%f,%f,%f,%f,%f\n", m.position[0], m.position[1], m.position[2], m.velocity[0], m.velocity[1], m.velocity[2]);
 		}
 		m.update();
 	}
