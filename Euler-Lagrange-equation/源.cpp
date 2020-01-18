@@ -5,86 +5,11 @@
 #include <math.h>
 #include <cstdio>
 
+#include "lag.hpp"
 #include "gif.h"
-
-template <unsigned int Dim, typename DataType>
-class Lagrangian
-{
-public:
-	Lagrangian(std::array<DataType, Dim> _position,
-		std::array<DataType, Dim> _velocity) 
-		:position(_position), velocity(_velocity) {};
-	~Lagrangian() = default;
+#include "draw.hpp"
 
 
-	std::array<DataType, Dim> position;
-	std::array<DataType, Dim> velocity;
-
-	virtual DataType calc_lagrangian() { return DataType(0); };
-
-	void update_p()
-	{
-		for (size_t i = 0; i < Dim; i++)
-		{
-			position[i] += velocity[i] * time_q;
-		}
-	}
-
-	void update_v()
-	{
-		for (size_t i = 0; i < Dim; i++)
-		{
-			find_v(partial_derivative_v(i) + partial_derivative_p(i)*time_q, i);
-		}
-	}
-
-private:
-	DataType partial_derivative_p(int i)
-	{
-		auto temp = position[i];
-		auto a = calc_lagrangian();
-		position[i] += delta;
-		auto b = calc_lagrangian();
-		position[i] = temp;
-		return (b - a) / delta;
-	}
-	DataType partial_derivative_v(int i)
-	{
-		auto temp = velocity[i];
-		auto a = calc_lagrangian();
-		velocity[i] += delta;
-		auto b = calc_lagrangian();
-		velocity[i] = temp;
-		return (b - a) / delta;
-	}
-
-	DataType partial_sq_derivative_v(int i)
-	{
-		auto temp = velocity[i];
-		auto a = calc_lagrangian();
-		velocity[i] += delta;
-		auto b = calc_lagrangian();
-		velocity[i] += delta;
-		auto c = calc_lagrangian();
-		velocity[i] = temp;
-		return (a - 2 * b + c) / delta / delta;
-	}
-
-	void find_v(DataType target_result, int i)
-	{
-		while (true)
-		{
-			auto pd = partial_sq_derivative_v(i);
-			auto f = partial_derivative_v(i) - target_result;
-			velocity[i] -= f / pd;
-			if (abs(f) < precise)
-				break;
-		}
-	}
-	const DataType delta = 10E-5;
-	const DataType precise = 10E-4;
-	const DataType time_q = 10E-4;
-};
 
 class MyClass : public Lagrangian<2, double>
 {
@@ -103,119 +28,88 @@ public:
 	};
 };
 
-void draw_pixel(std::vector<uint8_t>& v,int _width,int x,int y,uint8_t r, uint8_t g, uint8_t b, uint8_t a)
-{
-	v[x * _width * 4 + y * 4] = r;
-	v[x * _width * 4 + y * 4 + 1] = g;
-	v[x * _width * 4 + y * 4 + 2] = b;
-	v[x * _width * 4 + y * 4 + 3] = a;
-}
 
-void draw_point(std::vector<uint8_t>& v, int _width, int ra, int x, int y, 
-	uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+class MyClass2 : public Lagrangian<3, double>
 {
-	for (int i = -ra; i < ra; i++)
+public:
+	MyClass2(std::array<double, 3> _position, std::array<double, 3> _velocity) : Lagrangian(_position, _velocity) {};
+	~MyClass2() = default;
+	const double L1 = 1;
+	const double L2 = 1;
+	const double m1 = 1;
+	const double m2 = 1;
+	const double g = 9.8;
+
+	 double& a = position[0];
+	 double& b = position[1];
+	 double& c = position[2];
+	 double& va = velocity[0];
+	 double& vb = velocity[1];
+	 double& vc = velocity[2];
+
+	double T1()
 	{
-		for (int j = -ra; j < ra; j++)
-		{
-			if(i*i + j*j <= ra*ra)
-				draw_pixel(v, _width, x + i, y + j, r, g, b, a);
-		}
-	}
-}
-
-// 交换整数 a 、b 的值
-inline void swap_int(int *a, int *b) {
-	*a ^= *b;
-	*b ^= *a;
-	*a ^= *b;
-}
-
-// Bresenham's line algorithm
-void draw_line(std::vector<uint8_t>& v, int _width, int x1, int y1, int x2, int y2, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
-{
-	// 参数 c 为颜色值
-	int dx = abs(x2 - x1),
-		dy = abs(y2 - y1),
-		yy = 0;
-
-	if (dx < dy) {
-		yy = 1;
-		swap_int(&x1, &y1);
-		swap_int(&x2, &y2);
-		swap_int(&dx, &dy);
+#define Power pow
+#define Cos cos
+#define Sin sin
+		return m1 * ((L1*Power(va, 2)) / 2. + (Power(L1, 3)*Power(vb, 2)) / 6. +
+			(Power(L1, 2)*va*vb*Cos(b)) / 2.);
 	}
 
-	int ix = (x2 - x1) > 0 ? 1 : -1,
-		iy = (y2 - y1) > 0 ? 1 : -1,
-		cx = x1,
-		cy = y1,
-		n2dy = dy * 2,
-		n2dydx = (dy - dx) * 2,
-		d = dy * 2 - dx;
-
-	if (yy) { // 如果直线与 x 轴的夹角大于 45 度
-		while (cx != x2) {
-			if (d < 0) {
-				d += n2dy;
-			}
-			else {
-				cy += iy;
-				d += n2dydx;
-			}
-			draw_point(v, _width, 4, cy, cx, r, g, b, a);
-			cx += ix;
-		}
+	double T2()
+	{
+		return m2 * ((L2*Power(va, 2)) / 2. + L1 * L2*va*vb*Cos(b) +
+			(Power(L1, 2)*L2*Power(vb, 2)*Power(Cos(b), 2)) / 2. +
+			(Power(L2, 2)*va*vc*Cos(c)) / 2. +
+			(L1*Power(L2, 2)*vb*vc*Cos(b)*Cos(c)) / 2. +
+			(Power(L2, 3)*Power(vc, 2)*Power(Cos(c), 2)) / 6. +
+			(Power(L1, 2)*L2*Power(vb, 2)*Power(Sin(b), 2)) / 2. +
+			(L1*Power(L2, 2)*vb*vc*Sin(b)*Sin(c)) / 2. +
+			(Power(L2, 3)*Power(vc, 2)*Power(Sin(c), 2)) / 6.);
 	}
-	else { // 如果直线与 x 轴的夹角小于 45 度
-		while (cx != x2) {
-			if (d < 0) {
-				d += n2dy;
-			}
-			else {
-				cy += iy;
-				d += n2dydx;
-			}
-			draw_point(v, _width, 4, cx, cy, r, g, b, a);
-			cx += ix;
-		}
-	}
-}
 
+	double V()
+	{
+		return -1 / 2.* g *(m1*L1*cos(a) + m2 * (L1*cos(a) + L2 * cos(b)));
+	}
+
+	double calc_lagrangian() override {
+		return T1() + T2() - V();
+	};
+};
 
 int main()
 {
-	int width = 400;
-	int height = 400;
+
 	std::vector<uint8_t> one_frame(width * height * 4, 255);
 
-
-
-	auto fileName = "E:\\Double-Pendulum.gif";
+	auto fileName = "E:\\Double-Pendulum26.gif";
 	int delay = 10;
 	GifWriter g;
 	GifBegin(&g, fileName, width, height, delay);
 
-	MyClass m({ 0.5, -0.8 }, { 0,0 });
+	MyClass2 m({ 0.01, 1.7 , 1.2 }, { 0,0,0 });
 
-	
+
 	for (size_t i = 0; i < 100000; i++)
 	{
 		if (i % 100 == 0)
-		{	
-			int x1, y1, x2, y2;
-			x1 = 200 + 100 * cos(m.position[0]);
-			y1 = 200 + 100 * sin(m.position[0]);
-			x2 = x1 + 100 * cos(m.position[1]);
-			y2 = y1 + 100 * sin(m.position[1]);
-			draw_line(one_frame, width, 200, 200, x1, y1, 0, 0, 0, 255);
-			draw_line(one_frame, width, x1, y1, x2, y2, 0, 0, 0, 255);
-			GifWriteFrame(&g, one_frame.data(), width, height, delay);
-			draw_line(one_frame, width, 200, 200, x1, y1, 255, 255, 255, 255);
-			draw_line(one_frame, width, x1, y1, x2, y2, 255, 255, 255, 255);
+		{
+			//int x1, y1, x2, y2, x3, y3;
+			//x3 = width /2 + 100 * m.position[0];
+			//y3 = height / 2;
+			//x1 = x3 + m.L1 * 100 * sin(m.position[1]);
+			//y1 = y3 + m.L1 * 100 * cos(m.position[1]);
+			//x2 = x1 + m.L2 * 100 * sin(m.position[2]);
+			//y2 = y1 + m.L2 * 100 * cos(m.position[2]);
+			//draw_line(one_frame, width, x3, y3, x1, y1, 0, 0, 0, 255);
+			//draw_line(one_frame, width, x1, y1, x2, y2, 0, 0, 0, 255);
+			//GifWriteFrame(&g, one_frame.data(), width, height, delay);
+			//draw_line(one_frame, width, x3, y3, x1, y1, 255, 255, 255, 255);
+			//draw_line(one_frame, width, x1, y1, x2, y2, 255, 255, 255, 255);
+			printf("%f,%f,%f,%f,%f,%f\n", m.position[0], m.position[1], m.position[2], m.velocity[0], m.velocity[1], m.velocity[2]);
 		}
-		m.update_p();
-		m.update_v();
+		m.update();
 	}
 	GifEnd(&g);
 	return 0;
