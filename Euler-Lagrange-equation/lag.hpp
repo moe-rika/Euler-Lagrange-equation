@@ -8,19 +8,12 @@ public:
 		:position(_position), velocity(_velocity) {};
 	~Lagrangian() = default;
 
-
 	std::array<DataType, Dim> position;
 	std::array<DataType, Dim> velocity;
-	std::array<DataType, Dim> m_target;
+
 
 	virtual DataType calc_lagrangian() { return DataType(0); };
 
-	//void update()
-	//{
-	//	old_velocity = velocity;
-	//	update_v();
-	//	update_p();
-	//}
 
 	void update()
 	{
@@ -39,6 +32,7 @@ public:
 	}
 
 private:
+
 	DataType partial_derivative_p(int i)
 	{
 		auto temp = position[i];
@@ -46,8 +40,6 @@ private:
 		position[i] += delta;
 		auto b = calc_lagrangian();
 		position[i] = temp;
-		//if (i == 2)
-		//	printf("%f\n", (b - a) / delta);
 		return (b - a) / delta;
 	}
 	DataType partial_derivative_v(int i)
@@ -87,20 +79,5 @@ private:
 	const DataType precise = 10E-4;
 	const DataType time_q = 10E-4;
 
-	//void update_p()
-	//{
-	//	for (size_t i = 0; i < Dim; i++)
-	//	{
-	//		position[i] += velocity[i] * time_q;
-	//	}
-	//}
-
-	//void update_v()
-	//{
-	//	for (size_t i = 0; i < Dim; i++)
-	//	{
-	//		find_v(partial_derivative_v(i) + partial_derivative_p(i)*time_q, i);
-	//	}
-	//}
-
+	std::array<DataType, Dim> m_target;
 };

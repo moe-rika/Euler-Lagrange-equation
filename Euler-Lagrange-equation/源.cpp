@@ -88,7 +88,7 @@ int main()
 	GifWriter g;
 	GifBegin(&g, fileName, width, height, delay);
 
-	MyClass m({ 1.5 , 0.7 }, { 0,0 });
+	MyClass m({ 1.5 , 1.7 }, { 0,0 });
 
 	int x1, y1, x2, y2, x3 = width / 2, y3 = height/2;
 	//int x10, x20;
