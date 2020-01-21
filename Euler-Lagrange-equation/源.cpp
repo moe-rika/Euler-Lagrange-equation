@@ -83,34 +83,36 @@ int main()
 
 	std::vector<uint8_t> one_frame(width * height * 4, 255);
 
-	auto fileName = "E:\\Double-Pendulum51.gif";
+	auto fileName = "E:\\Double-Pendulum52.gif";
 	int delay = 10;
 	GifWriter g;
 	GifBegin(&g, fileName, width, height, delay);
 
-	MyClass2 m({ 0, 0.5 , 1.9 }, { 0,3,0 });
+	MyClass m({ 0.5 , 0.1 }, { 0,0 });
 
 	int x1, y1, x2, y2, x3 = width / 2, y3 = height/2;
-	int x10, x20;
-	x10 = x3 + m.L1 * 100 * sin(m.position[1]);
-	x20 = x10 + m.L2 * 100 * sin(m.position[2]);
+	//int x10, x20;
+	//x10 = x3 + m.L1 * 100 * sin(m.position[1]);
+	//x20 = x10 + m.L2 * 100 * sin(m.position[2]);
 
 	for (size_t i = 0; i < 100000; i++)
 	{
 		if (i % 100 == 0)
 		{
+			x3 = width / 2;
+			y3 = height / 2;
 
-			x1 = x3 + m.L1 * 100 * sin(m.position[1]);
-			y1 = y3 + m.L1 * 100 * cos(m.position[1]);
-			x2 = x1 + m.L2 * 100 * sin(m.position[2]);
-			y2 = y1 + m.L2 * 100 * cos(m.position[2]);
+			x1 = x3 + 100 * sin(m.position[0]);
+			y1 = y3 + 100 * cos(m.position[0]);
+			x2 = x1 +  100 * sin(m.position[1]);
+			y2 = y1 +  100 * cos(m.position[1]);
 
 			//x3 = width /2 + 100 * m.position[0]; 
 //error: m.position[0] is always zero
 //so compute it by other method
 //-------------------------------------
-			x3 = width / 2  - 1 / 2.*(m.m1*(x1 -  x10) + m.m2 * ((x2-x20) - (x1-x10)));
-			y3 = height / 2;
+			//x3 = width / 2  - 1 / 2.*(m.m1*(x1 -  x10) + m.m2 * ((x2-x20) - (x1-x10)));
+			//y3 = height / 2;
 
 			draw_line(one_frame, width, x3, y3, x1, y1, 0, 0, 0, 255);
 			draw_line(one_frame, width, x1, y1, x2, y2, 0, 0, 0, 255);
