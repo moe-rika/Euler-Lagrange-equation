@@ -25,9 +25,20 @@ public:
 		{
 			position[i] += velocity[i] * time_q;// do not change m_target[i]
 		}
-		for (size_t i = 0; i < Dim; i++)
+		while (true)
 		{
-			find_v(m_target[i], i);
+			double s = 0;
+			for (size_t i = 0; i < Dim; i++)
+			{
+				find_v(m_target[i], i);
+			}
+			for (int i = Dim - 1; i >= 0; i--)
+			{
+				find_v(m_target[i], i);
+				s += (partial_derivative_v(i) - m_target[i])*(partial_derivative_v(i) - m_target[i]);
+			}
+			if (s < precise*precise)
+				break;
 		}
 	}
 
@@ -75,8 +86,8 @@ private:
 				break;
 		}
 	}
-	const DataType delta = 10E-5;
-	const DataType precise = 10E-8;
+	const DataType delta = 10E-7;
+	const DataType precise = 10E-9;
 	const DataType time_q = 10E-6;
 
 	std::array<DataType, Dim> m_target;
