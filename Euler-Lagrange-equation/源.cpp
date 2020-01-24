@@ -11,6 +11,8 @@
 
 
 
+
+
 class MyClass : public Lagrangian<2, double>
 {
 public:
@@ -28,6 +30,26 @@ public:
 	};
 };
 
+//Mathematica code showed below
+
+/*
+l1x[a_, b_, c_, r_] := a + r Sin[b];
+l1y[a_, b_, c_, r_] := r  Cos[b];
+l2x[a_, b_, c_, r_] := a + L1 Sin[b] + r Sin[c];
+l2y[a_, b_, c_, r_] := L1 Cos[b] + r Cos[c];*/
+/*
+Integrate[((D[l1x[a[t], b[t], c[t], r], t])^2 + (D[
+		 l1y[a[t], b[t], c[t], r], t])^2)/2, {r, 0, L1}] /. {a[t] ->
+	a, b[t] -> b, c[t] -> c, a'[t] -> va, b'[t] -> vb,
+   c'[t] -> vc} // CForm
+*/
+
+/*
+Integrate[((D[l2x[a[t], b[t], c[t], r], t])^2 + (D[
+		 l2y[a[t], b[t], c[t], r], t])^2)/2, {r, 0, L2}] /. {a[t] ->
+	a, b[t] -> b, c[t] -> c, a'[t] -> va, b'[t] -> vb,
+   c'[t] -> vc} // CForm
+*/
 
 class MyClass2 : public Lagrangian<3, double>
 {
@@ -99,24 +121,24 @@ int main()
 	{
 		if (i % 100 == 0)
 		{
-			x3 = width / 2 + 100 * m.position[0];
-			x1 = x3 + 100 * sin(m.position[1]);
-			y1 = y3 + 100 * cos(m.position[1]);
-			x2 = x1 +  100 * sin(m.position[2]);
-			y2 = y1 +  100 * cos(m.position[2]);
-
-			//x3 = width /2 + 100 * m.position[0]; 
-//error: m.position[0] is always zero
-//so compute it by other method
-//-------------------------------------
-			//x3 = width / 2  - 1 / 2.*(m.m1*(x1 -  x10) + m.m2 * ((x2-x20) - (x1-x10)));
-			//y3 = height / 2;
-
-			draw_line(one_frame, width, x3, y3, x1, y1, 0, 0, 0, 255);
-			draw_line(one_frame, width, x1, y1, x2, y2, 0, 0, 0, 255);
-			GifWriteFrame(&g, one_frame.data(), width, height, delay);
-			draw_line(one_frame, width, x3, y3, x1, y1, 255, 255, 255, 255);
-			draw_line(one_frame, width, x1, y1, x2, y2, 255, 255, 255, 255);
+//			x3 = width / 2 + 100 * m.position[0];
+//			x1 = x3 + 100 * sin(m.position[1]);
+//			y1 = y3 + 100 * cos(m.position[1]);
+//			x2 = x1 +  100 * sin(m.position[2]);
+//			y2 = y1 +  100 * cos(m.position[2]);
+//
+//			//x3 = width /2 + 100 * m.position[0]; 
+////error: m.position[0] is always zero
+////so compute it by other method
+////-------------------------------------
+//			//x3 = width / 2  - 1 / 2.*(m.m1*(x1 -  x10) + m.m2 * ((x2-x20) - (x1-x10)));
+//			//y3 = height / 2;
+//
+//			draw_line(one_frame, width, x3, y3, x1, y1, 0, 0, 0, 255);
+//			draw_line(one_frame, width, x1, y1, x2, y2, 0, 0, 0, 255);
+//			GifWriteFrame(&g, one_frame.data(), width, height, delay);
+//			draw_line(one_frame, width, x3, y3, x1, y1, 255, 255, 255, 255);
+//			draw_line(one_frame, width, x1, y1, x2, y2, 255, 255, 255, 255);
 			printf("%f,%f,%f,%f,%f,%f,%f,%f,%f\n", m.position[0], m.position[1], m.position[2], m.velocity[0], m.velocity[1], m.velocity[2],m.T1()+m.T2(),m.V(), m.T1() + m.T2()+ m.V());
 		}
 		m.update();

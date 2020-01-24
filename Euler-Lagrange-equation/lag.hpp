@@ -64,7 +64,7 @@ private:
 		return (a - 2 * b + c) / delta / delta;
 	}
 
-	void find_v(DataType target_result, int i)
+	void find_v(const DataType& target_result, int i)
 	{
 		while (true)
 		{
