@@ -125,15 +125,15 @@ int main()
 			y2 = y1 +  100 * cos(m.position[2]);
 
 
-//			draw_line(one_frame, width, x3, y3, x1, y1, 0, 0, 0, 255);
-//			draw_line(one_frame, width, x1, y1, x2, y2, 0, 0, 0, 255);
-//			GifWriteFrame(&g, one_frame.data(), width, height, delay);
-//			draw_line(one_frame, width, x3, y3, x1, y1, 255, 255, 255, 255);
-//			draw_line(one_frame, width, x1, y1, x2, y2, 255, 255, 255, 255);
+			draw_line(one_frame, width, x3, y3, x1, y1, 0, 0, 0, 255);
+			draw_line(one_frame, width, x1, y1, x2, y2, 0, 0, 0, 255);
+			GifWriteFrame(&g, one_frame.data(), width, height, delay);
+			draw_line(one_frame, width, x3, y3, x1, y1, 255, 255, 255, 255);
+			draw_line(one_frame, width, x1, y1, x2, y2, 255, 255, 255, 255);
 			printf("%f,%f,%f,%f,%f,%f,%f,%f,%f\n", m.position[0], m.position[1], m.position[2], 
 				m.velocity[0], m.velocity[1], m.velocity[2], 
-				m.T1() + m.T2(), m.V(), m.T1() + m.T2() + m.V());
-			printf("%f\n",x1+2*x2+x3);// shall always be zero
+				m.T1() + m.T2(), m.V(), m.T1() + m.T2() + m.V()); //m.T1() + m.T2() + m.V() must be a constant value
+			printf("%d\n",x1+2*x2+x3);// must be a constant value
 		}
 		m.update();
 	}
