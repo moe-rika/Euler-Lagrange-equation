@@ -83,12 +83,12 @@ int main()
 
 	std::vector<uint8_t> one_frame(width * height * 4, 255);
 
-	auto fileName = "E:\\Double-Pendulum53.gif";
+	auto fileName = "E:\\Double-Pendulum54.gif";
 	int delay = 10;
 	GifWriter g;
 	GifBegin(&g, fileName, width, height, delay);
 
-	MyClass m({ 1.5 , 1.7 }, { 0,0 });
+	MyClass2 m({ 0 , 0.5,0.3 }, { 0,0,0 });
 
 	int x1, y1, x2, y2, x3 = width / 2, y3 = height/2;
 	//int x10, x20;
@@ -99,10 +99,11 @@ int main()
 	{
 		if (i % 100 == 0)
 		{
-			x1 = x3 + 100 * sin(m.position[0]);
-			y1 = y3 + 100 * cos(m.position[0]);
-			x2 = x1 +  100 * sin(m.position[1]);
-			y2 = y1 +  100 * cos(m.position[1]);
+			x3 = width / 2 + 100 * m.position[0];
+			x1 = x3 + 100 * sin(m.position[1]);
+			y1 = y3 + 100 * cos(m.position[1]);
+			x2 = x1 +  100 * sin(m.position[2]);
+			y2 = y1 +  100 * cos(m.position[2]);
 
 			//x3 = width /2 + 100 * m.position[0]; 
 //error: m.position[0] is always zero
@@ -116,7 +117,7 @@ int main()
 			GifWriteFrame(&g, one_frame.data(), width, height, delay);
 			draw_line(one_frame, width, x3, y3, x1, y1, 255, 255, 255, 255);
 			draw_line(one_frame, width, x1, y1, x2, y2, 255, 255, 255, 255);
-			//printf("%f,%f,%f,%f,%f,%f\n", m.position[0], m.position[1], m.position[2], m.velocity[0], m.velocity[1], m.velocity[2]);
+			printf("%f,%f,%f,%f,%f,%f,%f,%f,%f\n", m.position[0], m.position[1], m.position[2], m.velocity[0], m.velocity[1], m.velocity[2],m.T1()+m.T2(),m.V(), m.T1() + m.T2()+ m.V());
 		}
 		m.update();
 	}
