@@ -113,9 +113,6 @@ int main()
 	MyClass2 m({ 0 , 0.5,0.3 }, { 0,0,0 });
 
 	int x1, y1, x2, y2, x3 = width / 2, y3 = height/2;
-	//int x10, x20;
-	//x10 = x3 + m.L1 * 100 * sin(m.position[1]);
-	//x20 = x10 + m.L2 * 100 * sin(m.position[2]);
 
 	for (size_t i = 0; i < 10000000; i++)
 	{
