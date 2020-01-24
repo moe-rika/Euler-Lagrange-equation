@@ -76,8 +76,8 @@ private:
 		}
 	}
 	const DataType delta = 10E-5;
-	const DataType precise = 10E-4;
-	const DataType time_q = 10E-4;
+	const DataType precise = 10E-8;
+	const DataType time_q = 10E-6;
 
 	std::array<DataType, Dim> m_target;
 };

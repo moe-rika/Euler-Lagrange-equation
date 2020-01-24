@@ -117,29 +117,26 @@ int main()
 	//x10 = x3 + m.L1 * 100 * sin(m.position[1]);
 	//x20 = x10 + m.L2 * 100 * sin(m.position[2]);
 
-	for (size_t i = 0; i < 100000; i++)
+	for (size_t i = 0; i < 10000000; i++)
 	{
-		if (i % 100 == 0)
+		if (i % 10000 == 0)
 		{
-//			x3 = width / 2 + 100 * m.position[0];
-//			x1 = x3 + 100 * sin(m.position[1]);
-//			y1 = y3 + 100 * cos(m.position[1]);
-//			x2 = x1 +  100 * sin(m.position[2]);
-//			y2 = y1 +  100 * cos(m.position[2]);
-//
-//			//x3 = width /2 + 100 * m.position[0]; 
-////error: m.position[0] is always zero
-////so compute it by other method
-////-------------------------------------
-//			//x3 = width / 2  - 1 / 2.*(m.m1*(x1 -  x10) + m.m2 * ((x2-x20) - (x1-x10)));
-//			//y3 = height / 2;
-//
+			x3 = width / 2 + 100 * m.position[0];
+			x1 = x3 + 100 * sin(m.position[1]);
+			y1 = y3 + 100 * cos(m.position[1]);
+			x2 = x1 +  100 * sin(m.position[2]);
+			y2 = y1 +  100 * cos(m.position[2]);
+
+
 //			draw_line(one_frame, width, x3, y3, x1, y1, 0, 0, 0, 255);
 //			draw_line(one_frame, width, x1, y1, x2, y2, 0, 0, 0, 255);
 //			GifWriteFrame(&g, one_frame.data(), width, height, delay);
 //			draw_line(one_frame, width, x3, y3, x1, y1, 255, 255, 255, 255);
 //			draw_line(one_frame, width, x1, y1, x2, y2, 255, 255, 255, 255);
-			printf("%f,%f,%f,%f,%f,%f,%f,%f,%f\n", m.position[0], m.position[1], m.position[2], m.velocity[0], m.velocity[1], m.velocity[2],m.T1()+m.T2(),m.V(), m.T1() + m.T2()+ m.V());
+			printf("%f,%f,%f,%f,%f,%f,%f,%f,%f\n", m.position[0], m.position[1], m.position[2], 
+				m.velocity[0], m.velocity[1], m.velocity[2], 
+				m.T1() + m.T2(), m.V(), m.T1() + m.T2() + m.V());
+			printf("%f\n",x1+2*x2+x3);// shall always be zero
 		}
 		m.update();
 	}
