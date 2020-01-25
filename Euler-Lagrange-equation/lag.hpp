@@ -42,9 +42,9 @@ public:
 		}
 	}
 
-private:
+protected:
 
-	DataType partial_derivative_p(int i)
+	virtual DataType partial_derivative_p(const int& i)
 	{
 		auto temp = position[i];
 		auto a = calc_lagrangian();
@@ -53,7 +53,7 @@ private:
 		position[i] = temp;
 		return (b - a) / delta;
 	}
-	DataType partial_derivative_v(int i)
+	virtual DataType partial_derivative_v(const int& i)
 	{
 		auto temp = velocity[i];
 		auto a = calc_lagrangian();
@@ -63,7 +63,7 @@ private:
 		return (b - a) / delta;
 	}
 
-	DataType partial_sq_derivative_v(int i)
+	virtual DataType partial_sq_derivative_v(const int& i)
 	{
 		auto temp = velocity[i];
 		auto a = calc_lagrangian();
@@ -74,6 +74,8 @@ private:
 		velocity[i] = temp;
 		return (a - 2 * b + c) / delta / delta;
 	}
+
+private:
 
 	void find_v(const DataType& target_result, int i)
 	{
@@ -87,8 +89,8 @@ private:
 		}
 	}
 	const DataType delta = 10E-5;
-	const DataType precise = 10E-6;
-	const DataType time_q = 10E-7;
+	const DataType precise = 10E-12;
+	const DataType time_q = 10E-9;
 
 	std::array<DataType, Dim> m_target;
 };

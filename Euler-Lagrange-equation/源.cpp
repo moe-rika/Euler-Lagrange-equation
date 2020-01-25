@@ -9,8 +9,13 @@
 #include "gif.h"
 #include "draw.hpp"
 
-
-
+#define Power pow
+#define Cos cos
+#define Sin sin
+#define position0 position[0]
+#define position1 position[1]
+#define velocity0 velocity[0]
+#define velocity1 velocity[1]
 
 
 class MyClass : public Lagrangian<2, double>
@@ -36,6 +41,43 @@ public:
 	double calc_lagrangian() const override {
 		return T() - V();
 	};
+private:
+	double partial_derivative_p(const int& i) override
+	{
+		switch (i)
+		{
+		case 0:
+			return -1.5*g*L*m*Sin(position0) - 0.5*Power(L, 2)*m*velocity0*velocity1*Sin(position0 - position1);
+		case 1:
+			return 0.5*Power(L, 2)*m*velocity0*velocity1*Sin(position0 - position1) - 0.5*g*L*m*Sin(position1);
+		default:
+			return 0;
+		}
+	}
+	double partial_derivative_v(const int& i) override
+	{
+		switch (i)
+		{
+		case 0:
+			return 0.16666666666666666*Power(L, 2)*m*(8 * velocity0 + 3 * velocity1*Cos(position0 - position1));
+		case 1:
+			return 0.16666666666666666*Power(L, 2)*m*(2 * velocity1 + 3 * velocity0*Cos(position0 - position1));
+		default:
+			return 0;
+		}
+	}
+	double partial_sq_derivative_v(const int& i) override
+	{
+		switch (i)
+		{
+		case 0:
+			return 0. + 1.3333333333333333*Power(L, 2)*m;
+		case 1:
+			return 0. + 0.3333333333333333*Power(L, 2)*m;
+		default:
+			return 0;
+		}
+	}
 };
 
 //Mathematica code showed below
@@ -77,9 +119,7 @@ public:
 	double& vb = velocity[1];
 	double& vc = velocity[2];
 
-#define Power pow
-#define Cos cos
-#define Sin sin
+
 	double T1() const
 	{
 		return m1 * ((L1*Power(va, 2)) / 2. + (Power(L1, 3)*Power(vb, 2)) / 6. +
@@ -122,9 +162,9 @@ int main()
 
 	int x1, y1, x2, y2, x3 = width / 2, y3 = height/2;
 
-	for (size_t i = 0; i < 10000000*3; i++)
+	for (size_t i = 0; i < 1000000000*3; i++)
 	{
-		if (i % 100000 == 0)
+		if (i % 10000000 == 0)
 		{
 			//x3 = width / 2 + 100 * m.position[0];
 			//x1 = x3 + 100 * sin(m.position[1]);
