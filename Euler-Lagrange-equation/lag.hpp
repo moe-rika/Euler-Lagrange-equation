@@ -12,7 +12,7 @@ public:
 	std::array<DataType, Dim> velocity;
 
 
-	virtual DataType calc_lagrangian() { return DataType(0); };
+	virtual DataType calc_lagrangian() const { return DataType(0); };
 
 
 	void update()
@@ -82,13 +82,13 @@ private:
 			auto pd = partial_sq_derivative_v(i);
 			auto f = partial_derivative_v(i) - target_result;
 			velocity[i] -= f / pd;
-			if (abs(f) < precise)
+			if (abs(f) < precise/10)
 				break;
 		}
 	}
-	const DataType delta = 10E-7;
-	const DataType precise = 10E-9;
-	const DataType time_q = 10E-6;
+	const DataType delta = 10E-5;
+	const DataType precise = 10E-6;
+	const DataType time_q = 10E-7;
 
 	std::array<DataType, Dim> m_target;
 };

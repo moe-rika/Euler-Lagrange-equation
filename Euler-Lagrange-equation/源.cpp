@@ -21,12 +21,20 @@ public:
 	const double L = 1;
 	const double m = 1;
 	const double g = 9.8;
-	double calc_lagrangian() override {
-		return 1 / 6. * m * L * L * (\
+	double T() const
+	{
+		return  1 / 6. * m * L * L * (\
 			velocity[1] * velocity[1] + 4 * velocity[0] * velocity[0]\
 			+ 3 * velocity[0] * velocity[1] * cos(position[0] - position[1]) \
-			) \
-			+ 1 / 2.*m*g*L*(3 * cos(position[0]) + cos(position[1]));
+			);
+	}
+	double V() const
+	{
+		return - 1 / 2.*m*g*L*(3 * cos(position[0]) + cos(position[1]));
+	}
+
+	double calc_lagrangian() const override {
+		return T() - V();
 	};
 };
 
@@ -72,13 +80,13 @@ public:
 #define Power pow
 #define Cos cos
 #define Sin sin
-	double T1()
+	double T1() const
 	{
 		return m1 * ((L1*Power(va, 2)) / 2. + (Power(L1, 3)*Power(vb, 2)) / 6. +
 			(Power(L1, 2)*va*vb*Cos(b)) / 2.);
 	}
 
-	double T2()
+	double T2() const
 	{
 		return m2 * ((L2*Power(va, 2)) / 2. + L1 * L2*va*vb*Cos(b) +
 			(Power(L1, 2)*L2*Power(vb, 2)*Power(Cos(b), 2)) / 2. +
@@ -90,12 +98,12 @@ public:
 			(Power(L2, 3)*Power(vc, 2)*Power(Sin(c), 2)) / 6.);
 	}
 
-	double V()
+	double V() const
 	{
 		return -1 / 2.* g *(m1*L1*cos(b) + m2 * (L1*cos(b) + L2 * cos(c)));
 	}
 
-	double calc_lagrangian() override {
+	double calc_lagrangian() const override {
 		return T1() + T2() - V();
 	};
 };
@@ -105,24 +113,40 @@ int main()
 
 	std::vector<uint8_t> one_frame(width * height * 4, 255);
 
-	auto fileName = "E:\\Double-Pendulum54.gif";
+	auto fileName = "E:\\Double-Pendulum59.gif";
 	int delay = 10;
 	GifWriter g;
 	GifBegin(&g, fileName, width, height, delay);
 
-	MyClass2 m({ 0 , 1.5,1.9 }, { 0,0,0 });
+	MyClass m({ 1.9 , 1.5 }, { 0,0 });
 
 	int x1, y1, x2, y2, x3 = width / 2, y3 = height/2;
 
-	for (size_t i = 0; i < 1000000*5; i++)
+	for (size_t i = 0; i < 10000000*3; i++)
 	{
-		if (i % 10000 == 0)
+		if (i % 100000 == 0)
 		{
-			x3 = width / 2 + 100 * m.position[0];
-			x1 = x3 + 100 * sin(m.position[1]);
-			y1 = y3 + 100 * cos(m.position[1]);
-			x2 = x1 +  100 * sin(m.position[2]);
-			y2 = y1 +  100 * cos(m.position[2]);
+			//x3 = width / 2 + 100 * m.position[0];
+			//x1 = x3 + 100 * sin(m.position[1]);
+			//y1 = y3 + 100 * cos(m.position[1]);
+			//x2 = x1 +  100 * sin(m.position[2]);
+			//y2 = y1 +  100 * cos(m.position[2]);
+
+
+			//draw_line(one_frame, width, x3, y3, x1, y1, 0, 0, 0, 255);
+			//draw_line(one_frame, width, x1, y1, x2, y2, 0, 0, 0, 255);
+			//GifWriteFrame(&g, one_frame.data(), width, height, delay);
+			//draw_line(one_frame, width, x3, y3, x1, y1, 255, 255, 255, 255);
+			//draw_line(one_frame, width, x1, y1, x2, y2, 255, 255, 255, 255);
+			//printf("%f,%f,%f,%f,%f,%f,%f,%f,%f\n", m.position[0], m.position[1], m.position[2], 
+			//	m.velocity[0], m.velocity[1], m.velocity[2], 
+			//	m.T1() + m.T2(), m.V(), m.T1() + m.T2() + m.V()); //m.T1() + m.T2() + m.V() must be a constant value
+			//printf("%d\n",x1+2*x2+x3);// must be a constant value
+
+			x1 = x3 + 100 * sin(m.position[0]);
+			y1 = y3 + 100 * cos(m.position[0]);
+			x2 = x1 + 100 * sin(m.position[1]);
+			y2 = y1 + 100 * cos(m.position[1]);
 
 
 			draw_line(one_frame, width, x3, y3, x1, y1, 0, 0, 0, 255);
@@ -130,10 +154,10 @@ int main()
 			GifWriteFrame(&g, one_frame.data(), width, height, delay);
 			draw_line(one_frame, width, x3, y3, x1, y1, 255, 255, 255, 255);
 			draw_line(one_frame, width, x1, y1, x2, y2, 255, 255, 255, 255);
-			printf("%f,%f,%f,%f,%f,%f,%f,%f,%f\n", m.position[0], m.position[1], m.position[2], 
-				m.velocity[0], m.velocity[1], m.velocity[2], 
-				m.T1() + m.T2(), m.V(), m.T1() + m.T2() + m.V()); //m.T1() + m.T2() + m.V() must be a constant value
-			printf("%d\n",x1+2*x2+x3);// must be a constant value
+			printf("%f,%f,%f,%f,%f,%f,%f\n", m.position[0], m.position[1],
+				m.velocity[0], m.velocity[1],
+				m.T(), m.V(), m.T() + m.V()); //m.T1() + m.T2() + m.V() must be a constant value
+			//printf("%d\n", x1 + 2 * x2 + x3);// must be a constant value
 		}
 		m.update();
 	}
