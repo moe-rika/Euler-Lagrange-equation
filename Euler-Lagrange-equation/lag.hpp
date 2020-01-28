@@ -88,17 +88,17 @@ protected:
 
 private:
 
-	void find_v(const DataType& target_result, int i)
-	{
-		while (true)
-		{
-			auto pd = partial_sq_derivative_v(i);
-			auto f = partial_derivative_v(i) - target_result;
-			velocity[i] -= f / pd;
-			if (abs(f) < precise/10)
-				break;
-		}
-	}
+	//void find_v(const DataType& target_result, int i)
+	//{
+	//	while (true)
+	//	{
+	//		auto pd = partial_sq_derivative_v(i);
+	//		auto f = partial_derivative_v(i) - target_result;
+	//		velocity[i] -= f / pd;
+	//		if (abs(f) < precise/10)
+	//			break;
+	//	}
+	//}
 	const DataType delta = 10E-5;
 	const DataType precise = 10E-10;
 	const DataType time_q = 10E-8;
