@@ -6,7 +6,7 @@
 #include <cstdio>
 
 #include "lag.hpp"
-#include "gif.h"
+#include "gif.hpp"
 #include "draw.hpp"
 
 #define Power pow

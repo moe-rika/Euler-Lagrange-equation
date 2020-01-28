@@ -20,13 +20,13 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="gif.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="draw.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="lag.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="gif.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
