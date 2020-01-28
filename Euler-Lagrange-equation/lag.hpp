@@ -99,9 +99,9 @@ private:
 	//			break;
 	//	}
 	//}
-	const DataType delta = 10E-5;
-	const DataType precise = 10E-12;
-	const DataType time_q = 10E-5;
+	const DataType delta = 10E-7;
+	const DataType precise = 10E-9;
+	const DataType time_q = 10E-6;
 
 	std::array<DataType, Dim> m_target;
 };
