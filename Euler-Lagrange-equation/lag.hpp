@@ -27,15 +27,26 @@ public:
 		}
 		while (true)
 		{
+			//	double s = 0;
+			//	for (size_t i = 0; i < Dim; i++)
+			//	{
+			//		find_v(m_target[i], i);
+			//	}
+			//	for (int i = Dim - 1; i >= 0; i--)
+			//	{
+			//		find_v(m_target[i], i);
+			//		s += (partial_derivative_v(i) - m_target[i])*(partial_derivative_v(i) - m_target[i]);
+			//	}
+			//	if (s < precise*precise)
+			//		break;
+			//}
 			double s = 0;
 			for (size_t i = 0; i < Dim; i++)
 			{
-				find_v(m_target[i], i);
-			}
-			for (int i = Dim - 1; i >= 0; i--)
-			{
-				find_v(m_target[i], i);
-				s += (partial_derivative_v(i) - m_target[i])*(partial_derivative_v(i) - m_target[i]);
+				auto pd = partial_sq_derivative_v(i);
+				auto f = partial_derivative_v(i) - m_target[i];
+				velocity[i] -= f / pd;
+				s += f * f;
 			}
 			if (s < precise*precise)
 				break;
@@ -89,8 +100,8 @@ private:
 		}
 	}
 	const DataType delta = 10E-5;
-	const DataType precise = 10E-12;
-	const DataType time_q = 10E-9;
+	const DataType precise = 10E-10;
+	const DataType time_q = 10E-8;
 
 	std::array<DataType, Dim> m_target;
 };

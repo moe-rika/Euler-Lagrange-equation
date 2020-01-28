@@ -162,9 +162,9 @@ int main()
 
 	int x1, y1, x2, y2, x3 = width / 2, y3 = height/2;
 
-	for (size_t i = 0; i < 1000000000*3; i++)
+	for (size_t i = 0; i < 100000000*3; i++)
 	{
-		if (i % 10000000 == 0)
+		if (i % 1000000 == 0)
 		{
 			//x3 = width / 2 + 100 * m.position[0];
 			//x1 = x3 + 100 * sin(m.position[1]);
