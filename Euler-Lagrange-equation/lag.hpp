@@ -25,8 +25,10 @@ public:
 		{
 			position[i] += velocity[i] * time_q;// do not change m_target[i]
 		}
+		int n = 0;
 		while (true)
 		{
+			n++;
 			//	double s = 0;
 			//	for (size_t i = 0; i < Dim; i++)
 			//	{
@@ -45,10 +47,14 @@ public:
 			{
 				auto pd = partial_sq_derivative_v(i);
 				auto f = partial_derivative_v(i) - m_target[i];
-				velocity[i] -= f / pd;
+				m_adjust[i] = f / pd;
 				s += f * f;
 			}
-			if (s < precise*precise)
+			for (size_t i = 0; i < Dim; i++)
+			{
+				velocity[i] -= m_adjust[i];
+			}
+			if (max_it_step < n || s < precise*precise)
 				break;
 		}
 	}
@@ -99,9 +105,12 @@ private:
 	//			break;
 	//	}
 	//}
-	const DataType delta = 10E-7;
-	const DataType precise = 10E-9;
-	const DataType time_q = 10E-6;
+	const DataType delta = 1./(1<<18);
+	const DataType precise = 10E-8;
+	const DataType time_q = 0.7*10E-6;
+
+	const int max_it_step = 10000;
 
 	std::array<DataType, Dim> m_target;
+	std::array<DataType, Dim> m_adjust;
 };

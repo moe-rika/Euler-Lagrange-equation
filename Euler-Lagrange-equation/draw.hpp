@@ -67,7 +67,7 @@ void draw_line(std::vector<uint8_t>& v, int _width, int x1, int y1, int x2, int 
 				cy += iy;
 				d += n2dydx;
 			}
-			draw_point(v, _width, 4, cy, cx, r, g, b, a);
+			draw_point(v, _width, 2, cy, cx, r, g, b, a);
 			cx += ix;
 		}
 	}
@@ -80,7 +80,7 @@ void draw_line(std::vector<uint8_t>& v, int _width, int x1, int y1, int x2, int 
 				cy += iy;
 				d += n2dydx;
 			}
-			draw_point(v, _width, 4, cx, cy, r, g, b, a);
+			draw_point(v, _width, 2, cx, cy, r, g, b, a);
 			cx += ix;
 		}
 	}
